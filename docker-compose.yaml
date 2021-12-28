@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  php-apache-environment:
+    image: erni15/uassister
+    container_name: php-apache3
+    depends_on:
+      - db
+    volumes:
+      - ./admin:/var/www/html/
+    ports:
+      - 8000:80
+    networks:
+      - backend
+
+  db:
+    container_name: db3
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: db_surat
+    ports:
+      - "3300:3306"
+    volumes:
+      - db:/var/lib/mysql
+      - ./db_surat.sql:/docker-entrypoint-initdb.d/db_surat.sql
+    networks:
+      - backend
+
+volumes:
+  db:
+
+networks:
+  backend:
+    name: backend-network
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
